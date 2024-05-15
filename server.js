@@ -15,9 +15,14 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
   } else {
-    res.status(403).send('Forbidden: Access denied from this origin.');
-    return;
+    // Throw an error to break execution
+    next(new Error('Forbidden: Access denied from this origin.'));
   }
+});
+
+// Error handler middleware
+app.use((err, req, res, next) => {
+  res.status(403).send(err.message);
 });
 
 // les routes
