@@ -5,11 +5,19 @@ let port = process.env.PORT || 8010;
 const { main } = require('./routes/main');
 const { sendGridRoutes } = require('./routes/sendgrid.routes');
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://manolotsoo.github.io/");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  next();
+app.use((req, res, next) => {
+  const allowedOrigin = 'https://manolotsoo.github.io';
+  const requestOrigin = req.get('Origin');
+
+  if (requestOrigin === allowedOrigin) {
+    res.header('Access-Control-Allow-Origin', allowedOrigin);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+  } else {
+    res.status(403).send('Forbidden: Access denied from this origin.');
+    return;
+  }
 });
 
 // les routes
